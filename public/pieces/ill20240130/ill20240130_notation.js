@@ -1,14 +1,14 @@
 //#ef NOTES
 /*
-
-3-beat Bar w/curve in it - curve bar beat 7-beat 10
+bar under curve with its own builtin curve follower make local
+Separate out barlines and draw over other notations
 */
 //#endef NOTES
 
 //#ef General Variables
 const TEMPO_COLORS = [clr_limeGreen, clr_mustard, clr_brightBlue, clr_brightOrange, clr_lavander, clr_darkRed2, clr_brightGreen, clr_lightGrey, clr_neonMagenta, clr_plum, clr_blueGrey, clr_lightGrey, clr_lightGreen];
 //Dimensions
-const NOTATION_H = 160;
+const NOTATION_H = 162;
 const GAP_BTWN_NOTATION_LINES = 3;
 const VERT_DISTANCE_BETWEEN_LINES = NOTATION_H + GAP_BTWN_NOTATION_LINES;
 const NUM_NOTATION_LINES = 3;
@@ -37,6 +37,10 @@ function init() {
   makeCanvas();
   mkStaffRects();
   drawNotation();
+  calcCrvData();
+  console.log(crvDataArrays);
+
+  drawCrvs();
   let ts_Date = new Date(TS.now());
   let tsNowEpochTime_MS = ts_Date.getTime();
   epochTimeOfLastFrame_MS = tsNowEpochTime_MS;
@@ -170,56 +174,94 @@ let normalizedCurveArray = [];
 let curveCoordsByFramePerTempo = [];
 const CRVFOLLOW_R = 4;
 let crvFollowers = [];
-let curves = []
+let curves = [];
+let curveBars = [];
+let crvMargin = 2;
+const CRV_IY = 0;
+//Curve1 - crv20240131 w-237 h-52
+let crvDataArrays = [];
+
+function calcCrvData() {
+  let ogCrvData = [{
+    normAr: crv20240131,
+    w: 237,
+    h: 52,
+    bt: 5,
+    iy: CRV_IY
+  }];
+  ogCrvData.forEach((crvObj, crvIx) => {
+    let td = {};
+    let tArCp = deepCopy(crvObj.normAr);
+    td['crvPts'] = tArCp;
+    td['w'] = crvObj.w;
+    td['h'] = crvObj.h;
+    let tx = crvObj.bt * PX_PER_BEAT;
+    td['x'] = tx;
+    let tLineNum = Math.floor(tx / NOTATION_LINE_LENGTH_PX);
+    let ty = ((NOTATION_H + GAP_BTWN_NOTATION_LINES) * tLineNum) + CRV_IY;
+    td['y'] = ty;
+    crvDataArrays.push(td);
+  });
+}
 
 function drawCrvs() {
-  let crvArPerLine = [curve20240120_001, curve20240120_002, curve20240120_003, curve20240120_004, curve20240120_005];
-
-  crvArPerLine.forEach((ptAr, crvIx) => {
-    let ty = (NOTATION_H + GAP_BTWN_NOTATION_LINES) * crvIx;
+  crvDataArrays.forEach((crvObj, crvIx) => {
+    //curve rects
+    let tRect = mkSvgRect({
+      svgContainer: canvas.svg,
+      x: crvObj.x - crvMargin,
+      y: crvObj.y - crvMargin,
+      w: crvObj.w + (crvMargin * 2),
+      h: crvObj.h + (crvMargin * 2),
+      fill: 'black',
+      stroke: clr_limeGreen,
+      strokeW: 1,
+      roundR: 0
+    });
+    curveBars.push(tRect);
     let tcrv = mkSvgCrv({
       svgContainer: canvas.svg,
-      w: WORLD_W,
-      h: NOTATION_H,
-      x: 0,
-      y: ty,
-      pointsArray: ptAr,
+      w: crvObj.w,
+      h: crvObj.h,
+      x: crvObj.x,
+      y: crvObj.y,
+      pointsArray: crvObj.crvPts,
       fill: 'none',
       stroke: clr_limeGreen,
-      strokeW: 3,
+      strokeW: 2,
       strokeCap: 'round' //square;round;butt
     })
     curves.push(tcrv);
   });
 }
 
-function calcCurves() {
-  combinedCurve20240120.forEach((ptObj, ptIx) => {
-    td = {};
-    td['x'] = ptObj.x * WORLD_W;
-    td['y'] = ptObj.y * NOTATION_H;
-    normalizedCurveArray.push(td)
-  });
-  tempoConsts.forEach((tempoObj, tempoIx) => {
-    let tFrmAr = tempoObj.frameArray;
-    let tCrvPtsThisTempo = [];
-    tFrmAr.forEach((frmObj, frmIx) => {
-      let td = {};
-      td['x'] = frmObj.x;
-      let tx0 = frmObj.absX;
-      let tLineNum = Math.floor(tx0 / NOTATION_LINE_LENGTH_PX);
-      let ty2 = (NOTATION_H / 2) + ((NOTATION_H + GAP_BTWN_NOTATION_LINES) * tLineNum);
-      for (var i = 1; i < normalizedCurveArray.length; i++) {
-        let tx1 = normalizedCurveArray[i - 1].x;
-        let tx2 = normalizedCurveArray[i].x;
-        if (tx0 <= tx2 && tx0 > tx1) {
-          ty2 = normalizedCurveArray[i].y + ((NOTATION_H + GAP_BTWN_NOTATION_LINES) * tLineNum);
+function calcCrvAnimation() {
+  tempoConsts.forEach((tempoObj, tempoIx) => { //for each tempo
+    crvDataArrays.forEach((crvObj, crvIx) => { //for each curve
+      let tCrvPtsAr = crvObj.crvPts;
+      let tFrmAr = tempoObj.frameArray;
+      let tCrvPtsThisTempo = [];
+      tFrmAr.forEach((frmObj, frmIx) => {
+
+
+
+        let td = {};
+        td['x'] = frmObj.x;
+        let tx0 = frmObj.absX;
+        let tLineNum = Math.floor(tx0 / NOTATION_LINE_LENGTH_PX);
+        let ty2 = (NOTATION_H / 2) + ((NOTATION_H + GAP_BTWN_NOTATION_LINES) * tLineNum);
+        for (var i = 1; i < normalizedCurveArray.length; i++) {
+          let tx1 = normalizedCurveArray[i - 1].x;
+          let tx2 = normalizedCurveArray[i].x;
+          if (tx0 <= tx2 && tx0 > tx1) {
+            ty2 = normalizedCurveArray[i].y + ((NOTATION_H + GAP_BTWN_NOTATION_LINES) * tLineNum);
+          }
         }
-      }
-      td['y'] = ty2
-      tCrvPtsThisTempo.push(td);
+        td['y'] = ty2
+        tCrvPtsThisTempo.push(td);
+      });
+      curveCoordsByFramePerTempo.push(tCrvPtsThisTempo);
     });
-    curveCoordsByFramePerTempo.push(tCrvPtsThisTempo);
   });
 }
 

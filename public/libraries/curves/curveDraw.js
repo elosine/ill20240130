@@ -15,8 +15,8 @@ let clr_limeGreen = 'rgb(153,255,0)';
 
 
 
-let canvasH = 100;
-let canvasW = 950;
+let canvasH = 52;
+let canvasW = 237;
 let curveCoords = [];
 let canvasSize = [];
 
