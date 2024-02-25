@@ -122,7 +122,7 @@
         
         %20-24 %curve
          \hideNotes
-        r2 r4 \unHideNotes %curve
+        r1 r4 \unHideNotes %curve
         
         %25
         r4
@@ -144,7 +144,7 @@
 
         
 %         30-31
-        r4 r r r
+        r4 r 
         
         %32-36
           \hideNotes

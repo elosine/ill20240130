@@ -112,7 +112,7 @@
         e''8 -^    r8    
        
         \once \override Stem.direction = #down
-        \afterGrace  
+        \afterGrace  1/2
         e''2. -^ 
         { 
           \override NoteHead.font-size = #-8
