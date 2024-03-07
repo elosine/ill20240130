@@ -1,10 +1,9 @@
 //#ef NOTES
 /*
 
-
-Redoo loops based on more recent loops add bb
-curve Follower?
-bar follower
+Make loop brackets longer and skinnier
+choose tempi
+choose loops
 
 */
 //#endef NOTES
@@ -272,10 +271,11 @@ let lineY = [];
 //Tempo Timing
 let tempos = [
   [60, 60, ''],
-  [37.14, 37.14, ''],
-  [96.92, 37.14, 'd'],
-  [32.3, 86.67, 'a'],
-  [86.67, 86.67, '']
+  [83, 83, ''],
+  [111, 37.14, 'd'],
+  [29, 99, 'a'],
+  [47, 47, ''],
+  [66, 66, ''],
 ];
 let totalNumFramesPerTempo = [];
 let tempoConsts = [];
@@ -533,21 +533,21 @@ function drawBars() {
 //Loops
 let totalNumFramesPerLoop = [];
 let loops = [{
-  beatA: 2,
-  beatB: 5,
+  beatA: 9,
+  beatB: 14,
   tempoIx: 1
-// }, {
-//   beatA: 48,
-//   beatB: 54,
-//   tempoIx: 2
-// }, {
-//   beatA: 72,
-//   beatB: 90,
-//   tempoIx: 3
-// }, {
-//   beatA: 99,
-//   beatB: 117,
-//   tempoIx: 2
+  // }, {
+  //   beatA: 48,
+  //   beatB: 54,
+  //   tempoIx: 2
+  // }, {
+  //   beatA: 72,
+  //   beatB: 90,
+  //   tempoIx: 3
+  // }, {
+  //   beatA: 99,
+  //   beatB: 117,
+  //   tempoIx: 2
 }];
 loops.forEach((loopObj, loopIx) => {
   let tLenPx = (loopObj.beatB - loopObj.beatA) * PX_PER_BEAT;
@@ -612,7 +612,7 @@ function makeLoopCursors() {
       x1: 0,
       y1: scrollingCsrY1,
       x2: 0,
-      y2: scrollingCsrY1 + barH,
+      y2: scrollingCsrY1 + scrollingCsrH,
       stroke: loopClr,
       strokeW: 3
     });
@@ -668,14 +668,11 @@ function updateLoops() {
     loopCursors[loopIx].setAttributeNS(null, 'x1', tx);
     loopCursors[loopIx].setAttributeNS(null, 'x2', tx);
     loopCursors[loopIx].setAttributeNS(null, 'y1', ty);
-    loopCursors[loopIx].setAttributeNS(null, 'y2', ty + barH + 6);
+    loopCursors[loopIx].setAttributeNS(null, 'y2', ty + scrollingCsrH);
     //bbs
-
     let tBbX = tx % Math.round(PX_PER_BEAT);
     let bbiy = bbOneBeat[tBbX].y;
     let tbby = bbiy + ty;
-
-
     loopBbs[loopIx].setAttributeNS(null, 'cx', tx);
     loopBbs[loopIx].setAttributeNS(null, 'cy', tbby);
   });
