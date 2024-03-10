@@ -21,6 +21,7 @@ const NOTATION_LINE_LENGTH_PX = BEATS_PER_LINE * PX_PER_BEAT;
 const TOTAL_NUM_PX_IN_SCORE = NOTATION_LINE_LENGTH_PX * NUM_NOTATION_LINES;
 let WORLD_W = NOTATION_LINE_LENGTH_PX;
 let WORLD_H = (NOTATION_H * NUM_NOTATION_LINES) + (GAP_BTWN_NOTATION_LINES * (NUM_NOTATION_LINES - 1));
+console.log(WORLD_H);
 //Timing
 const LEADIN_SEC = 0;
 const FRAMERATE = 60;
@@ -272,7 +273,7 @@ let lineY = [];
 let tempos = [
   [60, 60, ''],
   [83, 83, ''],
-  [111, 37.14, 'd'],
+  [111, 27.14, 'd'],
   [29, 99, 'a'],
   [47, 47, ''],
   [66, 66, ''],
@@ -533,21 +534,25 @@ function drawBars() {
 //Loops
 let totalNumFramesPerLoop = [];
 let loops = [{
-  beatA: 9,
-  beatB: 14,
-  tempoIx: 1
-  // }, {
-  //   beatA: 48,
-  //   beatB: 54,
-  //   tempoIx: 2
-  // }, {
-  //   beatA: 72,
-  //   beatB: 90,
-  //   tempoIx: 3
-  // }, {
-  //   beatA: 99,
-  //   beatB: 117,
-  //   tempoIx: 2
+  beatA: 0.03,
+  beatB: 7,
+  tempoIx: 3
+  }, {
+  beatA: 10,
+  beatB: 15,
+  tempoIx: 5
+  }, {
+    beatA: 16.8,
+    beatB: 21,
+    tempoIx: 4
+  }, {
+    beatA: 24.98,
+    beatB: 29,
+    tempoIx: 0
+  }, {
+    beatA: 32.5,
+    beatB: 35.02,
+    tempoIx: 2
 }];
 loops.forEach((loopObj, loopIx) => {
   let tLenPx = (loopObj.beatB - loopObj.beatA) * PX_PER_BEAT;
@@ -642,16 +647,16 @@ function makeLoopBrackets() {
     let ty1 = loopObj[0].y;
     let tx1 = loopObj[0].x;
     let tSvgImage = document.createElementNS(SVG_NS, "image");
-    tSvgImage.setAttributeNS(XLINK_NS, 'xlink:href', NOTATION_FILE_NAME_PATH + 'leftBracket.svg');
+    tSvgImage.setAttributeNS(XLINK_NS, 'xlink:href', NOTATION_FILE_NAME_PATH + 'leftBracket_100.svg');
     tSvgImage.setAttributeNS(null, "y", ty1 - 6);
-    tSvgImage.setAttributeNS(null, "x", tx1);
+    tSvgImage.setAttributeNS(null, "x", tx1-2);
     tSvgImage.setAttributeNS(null, "visibility", 'visible');
     tSvgImage.setAttributeNS(null, "display", 'yes');
     canvas.svg.appendChild(tSvgImage);
     let ty2 = loopObj[loopObj.length - 1].y - 6;
     let tx2 = loopObj[loopObj.length - 1].x;
     let tSvgImageR = document.createElementNS(SVG_NS, "image");
-    tSvgImageR.setAttributeNS(XLINK_NS, 'xlink:href', NOTATION_FILE_NAME_PATH + 'rightBracket.svg');
+    tSvgImageR.setAttributeNS(XLINK_NS, 'xlink:href', NOTATION_FILE_NAME_PATH + 'rightBracket_100.svg');
     tSvgImageR.setAttributeNS(null, "y", ty2);
     tSvgImageR.setAttributeNS(null, "x", tx2);
     tSvgImageR.setAttributeNS(null, "visibility", 'visible');
