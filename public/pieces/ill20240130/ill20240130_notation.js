@@ -21,13 +21,12 @@ const NOTATION_LINE_LENGTH_PX = BEATS_PER_LINE * PX_PER_BEAT;
 const TOTAL_NUM_PX_IN_SCORE = NOTATION_LINE_LENGTH_PX * NUM_NOTATION_LINES;
 let WORLD_W = NOTATION_LINE_LENGTH_PX;
 let WORLD_H = (NOTATION_H * NUM_NOTATION_LINES) + (GAP_BTWN_NOTATION_LINES * (NUM_NOTATION_LINES - 1));
-console.log(WORLD_H);
 //Timing
 const LEADIN_SEC = 0;
 const FRAMERATE = 60;
 let FRAMECOUNT = -LEADIN_SEC * FRAMERATE;
 const MS_PER_FRAME = 1000.0 / FRAMERATE;
-let animationIsGo = true;
+let animationIsGo = false;
 //Timesync
 const TS = timesync.create({
   server: '/timesync',
